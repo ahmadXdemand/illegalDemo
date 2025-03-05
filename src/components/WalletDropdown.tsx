@@ -11,7 +11,7 @@ interface WalletDropdownProps {
 
 export default function WalletDropdown({ isOpen, wallet, onClose }: WalletDropdownProps) {
   const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const [showMnemonic, setShowMnemonic] = useState(false);
+  // const [showMnemonic, setShowMnemonic] = useState(false);
 
   if (!isOpen) return null;
 
