@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { WalletData } from '@/types/wallet';
+// import { WalletData } from '@/types/wallet';
 import UserWalletList from './UserWalletList';
 
 interface UserDropdownProps {

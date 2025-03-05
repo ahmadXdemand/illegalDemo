@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { WalletData } from '@/types/wallet';
-import WalletDisplay from './WalletDisplay';
+// import WalletDisplay from './WalletDisplay';
 
 export default function RightColumn() {
   const [showWalletForm, setShowWalletForm] = useState(false);
