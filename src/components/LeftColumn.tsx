@@ -3,37 +3,19 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import SuccessModal from './SuccessModal';
-import WalletSuccessModal from './WalletSuccessModal';
 
 export default function LeftColumn() {
   const [showCryptoModal, setShowCryptoModal] = useState(false);
-  const [showWalletModal, setShowWalletModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showWalletSuccessModal, setShowWalletSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
   const [deploymentData, setDeploymentData] = useState<{
     mintAddress: string;
     associatedTokenAccount: string;
   } | null>(null);
-  const [selectedNetwork, setSelectedNetwork] = useState("solana");
-  const [walletType, setWalletType] = useState("new");
-  const [securityLevel, setSecurityLevel] = useState("standard");
-  const [walletLoading, setWalletLoading] = useState(false);
-  const [walletData, setWalletData] = useState<{
-    network: string;
-    publicKey: string;
-    privateKey: string;
-    mnemonic: string;
-    type: string;
-  } | null>(null);
 
   const handleContractClick = () => {
     setShowCryptoModal(true);
-  };
-
-  const handleWalletClick = () => {
-    setShowWalletModal(true);
   };
 
   const handleDeployToken = async () => {
@@ -60,38 +42,6 @@ export default function LeftColumn() {
       alert("An error occurred while creating the token.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreateWallet = async () => {
-    setWalletLoading(true);
-    try {
-      const response = await fetch("/api/createWallet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          network: selectedNetwork,
-          type: walletType,
-          security: securityLevel,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setWalletData(data.wallet);
-        setShowWalletModal(false);
-        setShowWalletSuccessModal(true);
-      } else {
-        alert(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while creating the wallet.");
-    } finally {
-      setWalletLoading(false);
     }
   };
 
@@ -137,21 +87,6 @@ export default function LeftColumn() {
           >
             <div className="flex items-center justify-end space-x-2">
               <span>Crypto</span>
-              <svg className="w-4 h-4 text-white" viewBox="0 0 20 20">
-                <path fill="currentColor" d="M7 10l5 5 5-5z" />
-              </svg>
-            </div>
-          </button>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-400">Web3</span>
-          <button
-            onClick={handleWalletClick}
-            className="relative w-32 px-3 py-1 bg-transparent text-white text-right appearance-none"
-          >
-            <div className="flex items-center justify-end space-x-2">
-              <span>Wallet</span>
               <svg className="w-4 h-4 text-white" viewBox="0 0 20 20">
                 <path fill="currentColor" d="M7 10l5 5 5-5z" />
               </svg>
@@ -216,77 +151,12 @@ export default function LeftColumn() {
         </div>
       </Modal>
 
-      <Modal
-        isOpen={showWalletModal}
-        onClose={() => setShowWalletModal(false)}
-      >
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-white mb-4">Create Web3 Wallet</h2>
-          
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-400">Network</label>
-            <select 
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
-              value={selectedNetwork}
-              onChange={(e) => setSelectedNetwork(e.target.value)}
-            >
-              <option value="solana">Solana (Devnet)</option>
-              <option value="ethereum">Ethereum (Testnet)</option>
-              <option value="polygon">Polygon (Testnet)</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-400">Wallet Type</label>
-            <select 
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
-              value={walletType}
-              onChange={(e) => setWalletType(e.target.value)}
-            >
-              <option value="new">Create New Wallet</option>
-              <option value="import">Import Existing</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-400">Security Level</label>
-            <select 
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
-              value={securityLevel}
-              onChange={(e) => setSecurityLevel(e.target.value)}
-            >
-              <option value="standard">Standard</option>
-              <option value="high">High Security</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-
-          <button
-            onClick={handleCreateWallet}
-            disabled={walletLoading}
-            className={`w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded 
-              ${walletLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'} 
-              transition-colors`}
-          >
-            {walletLoading ? 'Creating...' : 'Create Wallet'}
-          </button>
-        </div>
-      </Modal>
-
       {deploymentData && (
         <SuccessModal
           isOpen={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
           mintAddress={deploymentData.mintAddress}
           associatedTokenAccount={deploymentData.associatedTokenAccount}
-        />
-      )}
-
-      {walletData && (
-        <WalletSuccessModal
-          isOpen={showWalletSuccessModal}
-          onClose={() => setShowWalletSuccessModal(false)}
-          walletData={walletData}
         />
       )}
     </div>
