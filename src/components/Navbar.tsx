@@ -1,8 +1,19 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WalletModal from './WalletModal';
 import WalletSuccessModal from './WalletSuccessModal';
+import WalletDisplay from './WalletDisplay';
+
+interface WalletData {
+  id: string;
+  network: string;
+  publicKey: string;
+  privateKey: string;
+  mnemonic: string;
+  type: string;
+  createdAt: string;
+}
 
 export default function Navbar() {
   const [showWalletModal, setShowWalletModal] = useState(false);
@@ -18,6 +29,15 @@ export default function Navbar() {
     mnemonic: string;
     type: string;
   } | null>(null);
+  const [activeWallet, setActiveWallet] = useState<WalletData | null>(null);
+
+  // Load wallet from sessionStorage on component mount
+  useEffect(() => {
+    const storedWallet = sessionStorage.getItem('activeWallet');
+    if (storedWallet) {
+      setActiveWallet(JSON.parse(storedWallet));
+    }
+  }, []);
 
   const handleWalletClick = () => {
     setShowWalletModal(true);
@@ -41,6 +61,9 @@ export default function Navbar() {
       const data = await response.json();
 
       if (data.success) {
+        // Store wallet in session storage
+        sessionStorage.setItem('activeWallet', JSON.stringify(data.wallet));
+        setActiveWallet(data.wallet);
         setWalletData(data.wallet);
         setShowWalletModal(false);
         setShowWalletSuccessModal(true);
@@ -68,26 +91,30 @@ export default function Navbar() {
         <span className="px-3 py-1 text-gray-500">Templates</span>
       </div>
       <div className="flex items-center gap-4">
-        <button 
-          className="flex items-center text-gray-400 hover:text-white transition-colors"
-          onClick={handleWalletClick}
-          title="Create Wallet"
-        >
-          <svg 
-            className="w-6 h-6" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
+        {activeWallet ? (
+          <WalletDisplay wallet={activeWallet} />
+        ) : (
+          <button 
+            className="flex items-center text-gray-400 hover:text-white transition-colors"
+            onClick={handleWalletClick}
+            title="Create Wallet"
           >
-            <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
-            <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
-            <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z" />
-          </svg>
-        </button>
-        <button className="px-3 py-1 rounded bg-gray-800 text-white text-sm">Go to dashboard</button>
+            <svg 
+              className="w-6 h-6" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+              <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+              <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z" />
+            </svg>
+          </button>
+        )}
+        {/* <button className="px-3 py-1 rounded bg-gray-800 text-white text-sm">Go to dashboard</button> */}
         <svg viewBox="0 0 24 24" className="w-6 h-6 text-white">
           <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
         </svg>

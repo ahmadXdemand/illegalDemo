@@ -1,11 +1,16 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+import type { NextConfig } from 'next'
+
+const config: NextConfig = {
+  webpack: (config) => {
+    config.watchOptions = {
+      poll: 1000,
+      aggregateTimeout: 300,
+      ignored: ['**/node_modules', '**/.next', '**/data'],
+    }
+    return config
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  reactStrictMode: true,
+  swcMinify: true,
 }
 
-module.exports = nextConfig
+export default config 
