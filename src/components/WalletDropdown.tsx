@@ -48,11 +48,13 @@ export default function WalletDropdown({ isOpen, wallet, onClose }: WalletDropdo
 
           <div>
             <label className="text-sm text-gray-400">Public Key</label>
-            <div className="flex items-center justify-between mt-1 p-2 bg-gray-800/50 rounded">
-              <code className="text-sm text-white font-mono">{wallet.publicKey}</code>
+            <div className="flex items-center gap-2 mt-1 p-2 bg-gray-800/50 rounded group">
+              <code className="text-sm text-white font-mono truncate flex-1">
+                {wallet.publicKey}
+              </code>
               <button
                 onClick={() => copyToClipboard(wallet.publicKey)}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white flex-shrink-0"
                 title="Copy to clipboard"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -73,13 +75,13 @@ export default function WalletDropdown({ isOpen, wallet, onClose }: WalletDropdo
               </button>
             </div>
             {showPrivateKey && (
-              <div className="flex items-center justify-between mt-1 p-2 bg-gray-800/50 rounded">
-                <code className="text-sm text-white font-mono break-all">
+              <div className="flex items-center gap-2 mt-1 p-2 bg-gray-800/50 rounded">
+                <code className="text-sm text-white font-mono break-all flex-1">
                   {wallet.privateKey}
                 </code>
                 <button
                   onClick={() => copyToClipboard(wallet.privateKey)}
-                  className="text-gray-400 hover:text-white ml-2 flex-shrink-0"
+                  className="text-gray-400 hover:text-white flex-shrink-0"
                   title="Copy to clipboard"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
