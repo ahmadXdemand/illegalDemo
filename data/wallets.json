@@ -7,5 +7,14 @@
     "publicKey": "AXwWgj2KrrNpJhhxBMmBPdnR9gpLqckGZYLouJnxpFLJ",
     "privateKey": "542a3803bc78bfd166fd3931380d0d748380b0b0a12a0d8bcab78793af53a1cc8da63e496f95bc093523e09e94bb016802b0baba689f025761b9c789d6c8d97f",
     "mnemonic": "rent exhaust trap lady correct measure breeze ice river vote mad sting"
+  },
+  {
+    "id": "1741210262196",
+    "createdAt": "2025-03-05T21:31:02.196Z",
+    "network": "solana",
+    "type": "new",
+    "publicKey": "FdqG39F1kpKGRBUFhkaqr1Tn3J2HFGr6n7mewoqq9KxM",
+    "privateKey": "905877a6277e28bd741593ec679a49dde84f4317355d5739f201e1b2f50b3a6ed97317cfa289a0b63f908549dcf5c7f1464eea6327bb874a546e36b18c29eed2",
+    "mnemonic": "mansion series know buyer plastic about pipe core flight shock finish steak"
   }
 ]
