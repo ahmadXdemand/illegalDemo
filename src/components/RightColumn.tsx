@@ -53,6 +53,12 @@ export default function RightColumn() {
     }
   };
 
+  const handleDisconnectWallet = () => {
+    // Clear the active wallet and remove it from sessionStorage
+    setActiveWallet(null);
+    sessionStorage.removeItem('activeWallet');
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       alert("Copied to clipboard!");
@@ -126,7 +132,7 @@ export default function RightColumn() {
 
             <div className="pt-2 border-t border-gray-700">
               <button
-                onClick={() => {/* Add disconnect wallet logic */}}
+                onClick={handleDisconnectWallet}
                 className="w-full px-4 py-2 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20 transition-colors"
               >
                 Disconnect Wallet
