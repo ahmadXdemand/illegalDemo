@@ -43,13 +43,13 @@ export async function POST(request: Request) {
     };
 
     // Read existing wallets
-    const wallets = JSON.parse(fs.readFileSync(WALLETS_FILE, 'utf-8'));
+    // const wallets = JSON.parse(fs.readFileSync(WALLETS_FILE, 'utf-8'));
     
-    // Add new wallet
-    wallets.push(walletData);
+    // // Add new wallet
+    // wallets.push(walletData);
     
     // Save updated wallets
-    fs.writeFileSync(WALLETS_FILE, JSON.stringify(wallets, null, 2));
+    // fs.writeFileSync(WALLETS_FILE, JSON.stringify(wallets, null, 2));
 
     return NextResponse.json({
       success: true,
