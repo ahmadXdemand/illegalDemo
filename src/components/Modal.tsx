@@ -3,11 +3,10 @@
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: () => void;
   children: React.ReactNode;
 };
 
-export default function Modal({ isOpen, onClose, onSubmit, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (

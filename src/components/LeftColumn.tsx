@@ -98,7 +98,6 @@ export default function LeftColumn() {
       <Modal 
         isOpen={showCryptoModal} 
         onClose={() => setShowCryptoModal(false)}
-        onSubmit={handleDeployToken}
       >
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-white mb-4">Crypto Contract Details</h2>

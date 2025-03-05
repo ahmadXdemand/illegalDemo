@@ -81,10 +81,16 @@ export async function POST() {
       mintAddress: mint.toBase58(),
       associatedTokenAccount: associatedTokenAccount.address.toBase58(),
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error:", error);
+    
+    // Safely handle the error message
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'An unknown error occurred';
+
     return NextResponse.json(
-      { error: error.message },
+      { error: errorMessage },
       { status: 500 }
     );
   }
