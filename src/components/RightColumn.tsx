@@ -232,20 +232,20 @@ export default function RightColumn() {
 
       <FormField
         label="Name"
-        defaultValue="Subhani"
+        defaultValue="Jon Doe"
         type="input"
       />
 
       <FormField
         label="System"
-        defaultValue="A cool dude"
+        defaultValue="Task Manager"
         type="textarea"
         minHeight="min-h-20"
       />
 
       <FormField
         label="Bio"
-        defaultValue="A dude"
+        defaultValue="A brief description about yourself."
         type="textarea"
         minHeight="min-h-16"
       />
