@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from 'react';
-import { WalletData } from '@/types/wallet';
 
 type WalletFormProps = {
-  activeWallet: WalletData | null;
-  setActiveWallet: (wallet: WalletData | null) => void;
   setShowWalletForm: (show: boolean) => void;
   handleCreateWallet: () => Promise<void>;
 };
 
-export default function WalletForm({ activeWallet, setActiveWallet, setShowWalletForm, handleCreateWallet }: WalletFormProps) {
-  const [selectedNetwork, setSelectedNetwork] = useState("solana");
-  const [walletType, setWalletType] = useState("new");
-  const [securityLevel, setSecurityLevel] = useState("standard");
-  const [walletLoading, setWalletLoading] = useState(false);
+export default function WalletForm({ setShowWalletForm, handleCreateWallet }: WalletFormProps) {
+  const [selectedNetwork] = useState("solana");
+  const [walletType] = useState("new");
+  const [securityLevel] = useState("standard");
+  const [walletLoading] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -36,7 +33,7 @@ export default function WalletForm({ activeWallet, setActiveWallet, setShowWalle
           <select 
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
             value={selectedNetwork}
-            onChange={(e) => setSelectedNetwork(e.target.value)}
+            disabled
           >
             <option value="solana">Solana (Devnet)</option>
             <option value="ethereum">Ethereum (Testnet)</option>
@@ -49,7 +46,7 @@ export default function WalletForm({ activeWallet, setActiveWallet, setShowWalle
           <select 
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
             value={walletType}
-            onChange={(e) => setWalletType(e.target.value)}
+            disabled
           >
             <option value="new">Create New Wallet</option>
             <option value="import">Import Existing</option>
@@ -61,7 +58,7 @@ export default function WalletForm({ activeWallet, setActiveWallet, setShowWalle
           <select 
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
             value={securityLevel}
-            onChange={(e) => setSecurityLevel(e.target.value)}
+            disabled
           >
             <option value="standard">Standard</option>
             <option value="high">High Security</option>

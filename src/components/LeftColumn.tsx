@@ -137,9 +137,9 @@ export default function LeftColumn() {
           <button
             onClick={handleDeployToken}
             disabled={loading}
-            className={`w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded 
+            className={`w-full px-4 py-2 rounded border border-gray-700  gap-2
               ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'} 
-              transition-colors`}
+             `}
           >
             {loading ? 'Deploying...' : 'Deploy Token'}
           </button>

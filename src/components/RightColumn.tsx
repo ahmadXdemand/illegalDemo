@@ -3,18 +3,13 @@
 import { useState, useEffect } from 'react';
 import { WalletData } from '@/types/wallet';
 import WalletForm from './WalletForm';
-import Modal from './Modal';
+// import Modal from './Modal';
 import SuccessModal from './SuccessModal';
 
 export default function RightColumn() {
   const [showWalletForm, setShowWalletForm] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState("solana");
-  const [walletType, setWalletType] = useState("new");
-  const [securityLevel, setSecurityLevel] = useState("standard");
-  const [walletLoading, setWalletLoading] = useState(false);
   const [activeWallet, setActiveWallet] = useState<WalletData | null>(null);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const [showCryptoModal, setShowCryptoModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -33,7 +28,6 @@ export default function RightColumn() {
   }, []);
 
   const handleCreateWallet = async () => {
-    setWalletLoading(true);
     try {
       const response = await fetch("/api/createWallet", {
         method: "POST",
@@ -41,9 +35,9 @@ export default function RightColumn() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          network: selectedNetwork,
-          type: walletType,
-          security: securityLevel,
+          network: "solana", // hardcoded since we removed state
+          type: "new",
+          security: "standard",
         }),
       });
 
@@ -59,8 +53,6 @@ export default function RightColumn() {
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while creating the wallet.");
-    } finally {
-      setWalletLoading(false);
     }
   };
 
@@ -92,7 +84,6 @@ export default function RightColumn() {
           associatedTokenAccount: data.associatedTokenAccount
         });
         setTokenAddress(data.mintAddress);
-        setShowCryptoModal(false);
         setShowSuccessModal(true);
       } else {
         alert(`Error: ${data.error}`);
@@ -217,30 +208,30 @@ export default function RightColumn() {
                 <div className="space-y-6">
                   <FormField
                     label="Name"
-                    value="Crypto Coin"
-                    readOnly
+                    defaultValue="Crypto Coin"
+                    
                     type="input"
                   />
 
                   <FormField
                     label="Symbol"
-                    value="CC"
-                    readOnly
+                    defaultValue="CC"
+                   
                     type="input"
                   />
 
                   <FormField
                     label="URI"
-                    value="https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/"
-                    readOnly
+                    defaultValue="https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/"
+                    
                     type="input"
                   />
 
                   <button
                     onClick={handleDeployToken}
                     disabled={loading}
-                    className={`w-full px-4 py-2 bg-blue-600 text-white rounded 
-                      ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'} 
+                    className={`w-full px-4 py-2 rounded border border-gray-700  gap-2
+                      ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} 
                       transition-colors`}
                   >
                     {loading ? 'Deploying...' : 'Deploy Token'}
@@ -295,8 +286,6 @@ export default function RightColumn() {
 
       {showWalletForm && (
         <WalletForm 
-          activeWallet={activeWallet}
-          setActiveWallet={setActiveWallet}
           setShowWalletForm={setShowWalletForm}
           handleCreateWallet={handleCreateWallet}
         />
