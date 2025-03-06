@@ -209,28 +209,39 @@ export default function RightColumn() {
                   <FormField
                     label="Name"
                     defaultValue="Crypto Coin"
-                    
                     type="input"
                   />
 
                   <FormField
                     label="Symbol"
                     defaultValue="CC"
-                   
                     type="input"
+                  />
+
+                  <FormField
+                    label="Wallet UID"
+                    defaultValue={activeWallet?.publicKey || ""}
+                    type="input"
+                    readOnly
+                  />
+
+                  <FormField
+                    label="Framework"
+                    defaultValue="Solana SPL Token"
+                    type="input"
+                    readOnly
                   />
 
                   <FormField
                     label="URI"
                     defaultValue="https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/"
-                    
                     type="input"
                   />
 
                   <button
                     onClick={handleDeployToken}
                     disabled={loading}
-                    className={`w-full px-4 py-2 rounded border border-gray-700  gap-2
+                    className={`w-full px-4 py-2 rounded border border-gray-700 gap-2
                       ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} 
                       transition-colors`}
                   >
@@ -339,9 +350,10 @@ type FormFieldProps = {
   defaultValue: string;
   type: 'input' | 'textarea';
   minHeight?: string;
+  readOnly?: boolean;
 }
 
-function FormField({ label, defaultValue, type, minHeight = '' }: FormFieldProps) {
+function FormField({ label, defaultValue, type, minHeight = '', readOnly = false }: FormFieldProps) {
   return (
     <div>
       <div className="flex items-center mb-2">
@@ -355,11 +367,13 @@ function FormField({ label, defaultValue, type, minHeight = '' }: FormFieldProps
           type="text"
           className="w-full p-2 bg-transparent border border-gray-700 rounded text-white"
           defaultValue={defaultValue}
+          readOnly={readOnly}
         />
       ) : (
         <textarea
           className={`w-full p-2 bg-transparent border border-gray-700 rounded text-white ${minHeight}`}
           defaultValue={defaultValue}
+          readOnly={readOnly}
         />
       )}
     </div>
