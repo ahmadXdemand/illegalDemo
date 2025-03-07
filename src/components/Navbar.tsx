@@ -134,13 +134,13 @@ export default function Navbar() {
         onCreateWallet={handleCreateWallet}
       />
 
-      {walletData && (
+      {/* {walletData && (
         <WalletSuccessModal
           isOpen={showWalletSuccessModal}
           onClose={() => setShowWalletSuccessModal(false)}
           walletData={walletData}
         />
-      )}
+      )} */}
     </nav>
   );
 } 

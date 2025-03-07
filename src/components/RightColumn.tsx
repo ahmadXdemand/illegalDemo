@@ -5,6 +5,7 @@ import { WalletData } from '@/types/wallet';
 import WalletForm from './WalletForm';
 // import Modal from './Modal';
 import SuccessModal from './SuccessModal';
+import WalletSuccessModal from './WalletSuccessModal';
 
 export default function RightColumn() {
   const [showWalletForm, setShowWalletForm] = useState(false);
@@ -18,6 +19,8 @@ export default function RightColumn() {
     associatedTokenAccount: string;
   } | null>(null);
   const [showDeployForm, setShowDeployForm] = useState(false);
+  const [showWalletSuccessModal, setShowWalletSuccessModal] = useState(false);
+  const [walletData, setWalletData] = useState<WalletData | null>(null);
 
   // Load wallet from sessionStorage on component mount
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function RightColumn() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          network: "solana", // hardcoded since we removed state
+          network: "solana",
           type: "new",
           security: "standard",
         }),
@@ -46,7 +49,9 @@ export default function RightColumn() {
       if (data.success) {
         sessionStorage.setItem('activeWallet', JSON.stringify(data.wallet));
         setActiveWallet(data.wallet);
+        setWalletData(data.wallet);
         setShowWalletForm(false);
+        setShowWalletSuccessModal(true);
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -160,7 +165,30 @@ export default function RightColumn() {
                 )}
               </div>
 
-              <div className="pt-2 border-t border-gray-700">
+              <div className="pt-2 border-t border-gray-700 space-y-2">
+                {/* Add View in Explorer button */}
+                <a 
+                  href={`https://explorer.solana.com/address/${activeWallet.publicKey}?cluster=devnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-4 py-2 rounded border border-gray-700 text-white hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg 
+                    className="w-4 h-4" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                  View in Explorer
+                </a>
+
                 <button
                   onClick={handleDisconnectWallet}
                   className="w-full px-4 py-2 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20 transition-colors"
@@ -299,6 +327,15 @@ export default function RightColumn() {
         <WalletForm 
           setShowWalletForm={setShowWalletForm}
           handleCreateWallet={handleCreateWallet}
+        />
+      )}
+
+      {/* Add Wallet Success Modal */}
+      {walletData && (
+        <WalletSuccessModal
+          isOpen={showWalletSuccessModal}
+          onClose={() => setShowWalletSuccessModal(false)}
+          walletData={walletData}
         />
       )}
 
