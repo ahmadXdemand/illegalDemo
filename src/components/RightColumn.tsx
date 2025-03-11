@@ -5,6 +5,7 @@ import { WalletData } from '@/types/wallet';
 import WalletForm from './WalletForm';
 // import Modal from './Modal';
 import SuccessModal from './SuccessModal';
+import WalletSuccessModal from './WalletSuccessModal';
 
 export default function RightColumn() {
   const [showWalletForm, setShowWalletForm] = useState(false);
@@ -18,6 +19,11 @@ export default function RightColumn() {
     associatedTokenAccount: string;
   } | null>(null);
   const [showDeployForm, setShowDeployForm] = useState(false);
+  const [showWalletSuccessModal, setShowWalletSuccessModal] = useState(false);
+  const [walletData, setWalletData] = useState<WalletData | null>(null);
+  const [file, setFile] = useState<File>();
+  const [uploading, setUploading] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState("");
 
   // Load wallet from sessionStorage on component mount
   useEffect(() => {
@@ -35,7 +41,7 @@ export default function RightColumn() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          network: "solana", // hardcoded since we removed state
+          network: "solana",
           type: "new",
           security: "standard",
         }),
@@ -46,7 +52,9 @@ export default function RightColumn() {
       if (data.success) {
         sessionStorage.setItem('activeWallet', JSON.stringify(data.wallet));
         setActiveWallet(data.wallet);
+        setWalletData(data.wallet);
         setShowWalletForm(false);
+        setShowWalletSuccessModal(true);
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -93,6 +101,44 @@ export default function RightColumn() {
       alert("An error occurred while creating the token.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const uploadToPinata = async () => {
+    try {
+      if (!file) {
+        alert("Please select a file first");
+        return;
+      }
+
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/pinata", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        setUploadedUrl(data.url);
+        alert("File uploaded successfully! URL: " + data.url);
+      } else {
+        throw new Error(data.error || "Upload failed");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Error uploading file");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -160,7 +206,30 @@ export default function RightColumn() {
                 )}
               </div>
 
-              <div className="pt-2 border-t border-gray-700">
+              <div className="pt-2 border-t border-gray-700 space-y-2">
+                {/* Add View in Explorer button */}
+                <a 
+                  href={`https://explorer.solana.com/address/${activeWallet.publicKey}?cluster=devnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-4 py-2 rounded border border-gray-700 text-white hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg 
+                    className="w-4 h-4" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                  View in Explorer
+                </a>
+
                 <button
                   onClick={handleDisconnectWallet}
                   className="w-full px-4 py-2 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20 transition-colors"
@@ -206,6 +275,42 @@ export default function RightColumn() {
                 </div>
                 
                 <div className="space-y-6">
+                <div className="space-y-2">
+                    <label className="block text-sm text-gray-400">Token Image</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
+                      />
+                      <button
+                        onClick={uploadToPinata}
+                        disabled={uploading || !file}
+                        className={`px-4 py-2 rounded border border-gray-700 
+                          ${uploading || !file ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} 
+                          transition-colors`}
+                      >
+                        {uploading ? (
+                          <div className="flex items-center gap-2">
+                            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Uploading...
+                          </div>
+                        ) : (
+                          'Upload to Pinata'
+                        )}
+                      </button>
+                    </div>
+                    {uploadedUrl && (
+                      <div className="mt-2 p-2 bg-gray-800/50 rounded">
+                        <p className="text-sm text-gray-300">Uploaded successfully!</p>
+                        <p className="text-xs text-gray-400 break-all">{uploadedUrl}</p>
+                      </div>
+                    )}
+                  </div>
                   <FormField
                     label="Name"
                     defaultValue="Crypto Coin"
@@ -218,7 +323,7 @@ export default function RightColumn() {
                     type="input"
                   />
 
-                  <FormField
+                  {/* <FormField
                     label="Wallet UID"
                     defaultValue={activeWallet?.publicKey || ""}
                     type="input"
@@ -232,11 +337,13 @@ export default function RightColumn() {
                     readOnly
                   />
 
+                  
+
                   <FormField
                     label="URI"
                     defaultValue="https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/"
                     type="input"
-                  />
+                  /> */}
 
                   <button
                     onClick={handleDeployToken}
@@ -299,6 +406,15 @@ export default function RightColumn() {
         <WalletForm 
           setShowWalletForm={setShowWalletForm}
           handleCreateWallet={handleCreateWallet}
+        />
+      )}
+
+      {/* Add Wallet Success Modal */}
+      {walletData && (
+        <WalletSuccessModal
+          isOpen={showWalletSuccessModal}
+          onClose={() => setShowWalletSuccessModal(false)}
+          walletData={walletData}
         />
       )}
 

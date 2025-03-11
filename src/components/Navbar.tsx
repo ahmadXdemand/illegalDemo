@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import WalletModal from './WalletModal';
-import WalletSuccessModal from './WalletSuccessModal';
 import WalletDisplay from './WalletDisplay';
 import UserDropdown from './UserDropdown';
 
@@ -18,18 +17,10 @@ interface WalletData {
 
 export default function Navbar() {
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const [showWalletSuccessModal, setShowWalletSuccessModal] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState("solana");
   const [walletType, setWalletType] = useState("new");
   const [securityLevel, setSecurityLevel] = useState("standard");
   const [walletLoading, setWalletLoading] = useState(false);
-  const [walletData, setWalletData] = useState<{
-    network: string;
-    publicKey: string;
-    privateKey: string;
-    mnemonic: string;
-    type: string;
-  } | null>(null);
   const [activeWallet, setActiveWallet] = useState<WalletData | null>(null);
 
   // Load wallet from sessionStorage on component mount
@@ -62,12 +53,9 @@ export default function Navbar() {
       const data = await response.json();
 
       if (data.success) {
-        // Store wallet in session storage
         sessionStorage.setItem('activeWallet', JSON.stringify(data.wallet));
         setActiveWallet(data.wallet);
-        setWalletData(data.wallet);
         setShowWalletModal(false);
-        setShowWalletSuccessModal(true);
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -133,14 +121,6 @@ export default function Navbar() {
         walletLoading={walletLoading}
         onCreateWallet={handleCreateWallet}
       />
-
-      {walletData && (
-        <WalletSuccessModal
-          isOpen={showWalletSuccessModal}
-          onClose={() => setShowWalletSuccessModal(false)}
-          walletData={walletData}
-        />
-      )}
     </nav>
   );
 } 
