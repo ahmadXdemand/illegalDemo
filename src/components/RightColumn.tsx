@@ -24,6 +24,8 @@ export default function RightColumn() {
   const [file, setFile] = useState<File>();
   const [uploading, setUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState("");
+  const [tokenName, setTokenName] = useState("Crypto Coin");
+  const [tokenSymbol, setTokenSymbol] = useState("CC");
 
   // Load wallet from sessionStorage on component mount
   useEffect(() => {
@@ -79,10 +81,23 @@ export default function RightColumn() {
   };
 
   const handleDeployToken = async () => {
+    if (!uploadedUrl) {
+      alert("Please upload an image first");
+      return;
+    }
+    console.log(tokenName, tokenSymbol, uploadedUrl);
     setLoading(true);
     try {
       const response = await fetch("/api/createToken", { 
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: tokenName,
+          symbol: tokenSymbol,
+          uri: uploadedUrl
+        })
       });
       const data = await response.json();
 
@@ -92,6 +107,7 @@ export default function RightColumn() {
           associatedTokenAccount: data.associatedTokenAccount
         });
         setTokenAddress(data.mintAddress);
+        setShowDeployForm(false);
         setShowSuccessModal(true);
       } else {
         alert(`Error: ${data.error}`);
@@ -313,43 +329,23 @@ export default function RightColumn() {
                   </div>
                   <FormField
                     label="Name"
-                    defaultValue="Crypto Coin"
+                    defaultValue={tokenName}
                     type="input"
+                    onChange={(e) => setTokenName(e.target.value)}
                   />
 
                   <FormField
                     label="Symbol"
-                    defaultValue="CC"
+                    defaultValue={tokenSymbol}
                     type="input"
+                    onChange={(e) => setTokenSymbol(e.target.value)}
                   />
-
-                  {/* <FormField
-                    label="Wallet UID"
-                    defaultValue={activeWallet?.publicKey || ""}
-                    type="input"
-                    readOnly
-                  />
-
-                  <FormField
-                    label="Framework"
-                    defaultValue="Solana SPL Token"
-                    type="input"
-                    readOnly
-                  />
-
-                  
-
-                  <FormField
-                    label="URI"
-                    defaultValue="https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/"
-                    type="input"
-                  /> */}
 
                   <button
                     onClick={handleDeployToken}
-                    disabled={loading}
+                    disabled={loading || !uploadedUrl}
                     className={`w-full px-4 py-2 rounded border border-gray-700 gap-2
-                      ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} 
+                      ${(loading || !uploadedUrl) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} 
                       transition-colors`}
                   >
                     {loading ? 'Deploying...' : 'Deploy Token'}
@@ -467,9 +463,10 @@ type FormFieldProps = {
   type: 'input' | 'textarea';
   minHeight?: string;
   readOnly?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-function FormField({ label, defaultValue, type, minHeight = '', readOnly = false }: FormFieldProps) {
+function FormField({ label, defaultValue, type, minHeight = '', readOnly = false, onChange }: FormFieldProps) {
   return (
     <div>
       <div className="flex items-center mb-2">
@@ -484,12 +481,14 @@ function FormField({ label, defaultValue, type, minHeight = '', readOnly = false
           className="w-full p-2 bg-transparent border border-gray-700 rounded text-white"
           defaultValue={defaultValue}
           readOnly={readOnly}
+          onChange={onChange}
         />
       ) : (
         <textarea
           className={`w-full p-2 bg-transparent border border-gray-700 rounded text-white ${minHeight}`}
           defaultValue={defaultValue}
           readOnly={readOnly}
+          onChange={onChange}
         />
       )}
     </div>

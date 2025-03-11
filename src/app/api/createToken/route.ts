@@ -6,8 +6,11 @@ import { NextResponse } from 'next/server';
 
 const { createCreateMetadataAccountV3Instruction } = mplTokenMetadata;
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const body = await request.json();
+    const { name, symbol, uri } = body;  // Get values from request body
+
     // 🔐 Private Key (Keep it secure!)
     const secretKey = bs58.decode("MWjhJ8ifsHhSuxr1tv51TChPEPUetmydj4hZyBg7ZZNeFYatn8xU9uxLeycNVU5rJ4dvKQWqMkaLPa94SJmB2Cz");
     const payer = Keypair.fromSecretKey(secretKey);
@@ -59,9 +62,9 @@ export async function POST() {
       {
         createMetadataAccountArgsV3: {
           data: {
-            name: "Crypto Coin",
-            symbol: "CC",
-            uri: "https://gateway.pinata.cloud/ipfs/QmP7rNUJT9w7BuEvCBbip7dqdXrXiS7An2YJ95KLbdYLwS/",
+            name,       // Use passed name instead of hardcoded value
+            symbol,     // Use passed symbol instead of hardcoded value
+            uri,        // Use passed URI instead of hardcoded value
             sellerFeeBasisPoints: 0,
             creators: null,
             collection: null,

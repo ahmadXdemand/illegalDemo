@@ -6,6 +6,7 @@ export type FormFieldProps = {
   type: "input" | "textarea";
   minHeight?: string;
   readOnly?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
 
 export default function FormField({ 
@@ -13,7 +14,8 @@ export default function FormField({
   defaultValue, 
   type, 
   minHeight,
-  readOnly 
+  readOnly,
+  onChange 
 }: FormFieldProps) {
   return (
     <div className="space-y-2">
@@ -23,12 +25,14 @@ export default function FormField({
           type="text"
           defaultValue={defaultValue}
           readOnly={readOnly}
+          onChange={onChange}
           className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
         />
       ) : (
         <textarea
           defaultValue={defaultValue}
           readOnly={readOnly}
+          onChange={onChange}
           className={`w-full p-2 bg-gray-800 border border-gray-700 rounded text-white ${minHeight || ''}`}
         />
       )}
